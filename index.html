@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+</head>
+<body>  
+    {% if schools|length > 1 %}
+        {% for school in schools %}
+            <li>{{ school.name }} {{ school.address }} +7{{ school.phone }}</li>
+        {% endfor %}
+    {% else %}
+        <li>{{ schools[0].name }}<br>District: {{ schools[0].district }}<br>Address: {{ schools[0].address }}<br>Phone Number: +7 {{ schools[0].phone }}<br>Official Site: {{ schools[0].site }}<br>{{ schools[0].chiefpos }}: {{ schools[0].chief }}<br> {{ schools[0].description }}</li>
+    {% endif %}
+</body>
+</html>
