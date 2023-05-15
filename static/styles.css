@@ -1,0 +1,110 @@
+body {
+    font-family: 'Ubuntu', sans-serif;
+    list-style-type: none;
+}
+
+#list_map{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.AdmAreas {
+    flex: 0 0 20%;
+    list-style-type: none;
+}
+.AdmAreas li {
+    text-align: center;
+    font-size: 25px;
+    font-weight: medium;
+    /* border: solid 2px black; */
+    box-shadow: 3px 3px 11px #808080c9;
+    margin: 12px -5px 12px -5px;
+    padding: 13px 0 13px 0;
+    border-radius: 10px;
+}
+.admbtn:hover {
+    background-color: rgb(197, 156, 235);
+}
+.AdmAreas a {
+    outline: none;
+    text-decoration: none;
+    color: rgb(99, 99, 99);
+}
+
+#map {
+    flex: 0 0 40%;
+    width: 500px;
+    height: 600px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px  gray;
+    margin: 90px 0px 50px 50px;
+    
+}
+.allinfo {
+    border: solid 7px violet;
+    border-radius: 15px;
+    color: #505050;
+    background-color: rgba(238, 130, 238, 0.111);
+    margin: 30px 2%;
+}
+.allinfo ul{
+    list-style-type: none;
+    font-size: 23px;
+}
+
+ .allinfo li:nth-child(1) {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+ }
+ .allinfo li:first-of-type {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 15px;
+}
+ .placing, .offsite, .phone {
+    position: relative;
+    width: 30%;
+    right: 0px;
+    margin: 0 20px 20px 0;
+    padding: 10px;
+    border: solid 4px #505050;
+    border-radius: 10px;
+    box-shadow: 2px 2px 4px #dedede;
+ }
+ .placing, .offsite, .phone li {
+    text-align: end;
+ }
+ .offsite a{
+    text-decoration: none;
+    color: #505050;
+ }
+ .offsite:hover a {
+    color: #ffa63e;
+ }
+
+ .mapradius {
+    position: absolute;
+    top: 5px;
+    right: 15%;
+    height: 80px;
+    border: solid 5px #505050;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+    /* margin: 0 15% 30px 0; */
+ }
+ .mapradius p {
+    margin: 5px;
+ }
+ #myCheckbox {
+    width: 20px;
+    height: 20px;
+ }
+ #myInput {
+    padding: 10px;
+ }
+
+
