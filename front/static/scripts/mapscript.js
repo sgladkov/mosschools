@@ -145,32 +145,30 @@ function on_map_click(event, id) {
         
       }
       let latlng = event.latlng
-      marker = L.marker(latlng).addTo(map);
       
+      marker = L.marker(latlng).addTo(map);
+      var all_markers = []
       axios.get(`/schools-in-radius/?lat=${latlng.lng}&lng=${latlng.lat}&radius=${parseInt(radius)}`)
-      .then(function (response) { 
-          let promises = response.data.map(function(e) {
-            return axios.get('/schoolcoords/?school_id=' + e)
-          })
-          Promise.all(promises)
-          .then(function(responses) {
-            let all_markers = responses.map(function(response) {
-              let lat = response.data[0];
-              let lng = response.data[1];
-              let name = JSON.parse(response.data[2].body)['name']
-              let address = JSON.parse(response.data[2].body)['address']
-              return L.marker([lng, lat]).bindPopup(`${name}<br>${address}`);;
-            });
-            markers.addLayers(all_markers)
-            map.addLayer(markers)   
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      })
-      .catch(function (error) {
+        .then(function (response) { 
+            let data = response.data
+            return data
+        })
+        .then(function(data) {
+          for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                
+                all_markers.push(L.marker([data[key]['coords']['lg'],data[key]['coords']['lt']]).bindPopup(`${data[key]['name']}<br>${data[key]['address']}`))
+              }
+            } 
+            
+            window.markers.addLayers(all_markers)
+            map.addLayer(window.markers)
+        })
+        .catch(function (error) {
         console.log(error);
-      });
+        });
+  
+
     }
     let adm_btn = document.getElementById(`${id}`)
     var that_adm = adm_btn.parentElement.dataset.adm
@@ -196,11 +194,11 @@ function on_map_click(event, id) {
       for (var key in data) {
         if (data.hasOwnProperty(key)) {
           new_tbody += `<tr>  
-                            <td class="namebtn"><a class='link' href='#' data-id="${data[key][0]}"> ${data[key][1]} </a> </td>
-                            <td>${data[key][2]}</td>
-                            <td>${data[key][3]} <br> ${data[key][4]} </td>
-                            <td>${data[key][5]}</td>
-                            <td><a href="https://${data[key][6]}"> ${data[key][6]}</a></td>
+                            <td class="namebtn"><a class='link' href='#' data-id="${data[key]['id']}"> ${data[key]['name']} </a> </td>
+                            <td>${data[key]['orgtype']}</td>
+                            <td>${data[key]['admarea']} <br> ${data[key]['district']} </td>
+                            <td>${data[key]['address']}</td>
+                            <td><a href="https://${data[key]['site']}"> ${data[key]['site']}</a></td>
                         </tr>`;
         }
       }
@@ -229,13 +227,14 @@ function on_link_click(event) {
   var that_id = this.dataset.id;
   axios.get('/schoolcoords/?school_id=' + that_id)
   .then(function (response) {
-    
+    let data = response.data
     var place = document.querySelectorAll('.allinfo')[0]
     var table = document.getElementById('sortable')
     var table_wrapper = document.getElementById('sortable_wrapper')
-    var lat = response.data[0];
-    var lng = response.data[1];
-    var parsedData = JSON.parse(response.data[2].body);
+    var lat = data['coords']['lt'];
+    var lng = data['coords']['lg'];
+    
+    
 
     if(marker !== null){
       map.removeLayer(marker);
@@ -244,25 +243,25 @@ function on_link_click(event) {
     marker = L.marker([lng, lat]).addTo(map);
     
     map.setView([lng, lat], 13);
-    var popup = marker.bindPopup(`<b>${parsedData['fullname']}</b>${parsedData['address']}<br>`);
+    var popup = marker.bindPopup(`<b>${data['fullname']}</b>${data['address']}<br>`);
     popup.openPopup();
     place.innerHTML =
       `<ul> 
-          <li>${parsedData['fullname']} </li> 
+          <li>${data['fullname']} </li> 
           <div class="placing">
               <li> Расположение </li>
-              <li> ${parsedData['admarea']} </li> 
-              <li> ${parsedData['district']}</li> 
-              <li> ${parsedData['address']} </li> 
+              <li> ${data['admarea']} </li> 
+              <li> ${data['district']}</li> 
+              <li> ${data['address']} </li> 
           </div>
           <div class="offsite">
               <li> Официальный сайт </li>
-              <li> <a href="https://${parsedData['site']} ">${parsedData['site']}</a></li> 
-              <li> ${parsedData['chiefpos']}: ${parsedData['chief']} </li> 
+              <li> <a href="https://${data['site']} ">${data['site']}</a></li> 
+              <li> ${data['chiefpos']}: ${data['chief']} </li> 
           </div>
           <div class="phone">
               <li> Номер телефона </li>
-              <li> +7 ${parsedData['phone']} </li>
+              <li> +7 ${data['phone']} </li>
           </div>
       </ul>`
     place.style.display = ''
@@ -301,7 +300,7 @@ function on_adm_click(event) {
   //   L.marker([lng, lat]).addTo(map);
   //   // map.setView([lng, lat], 13);
   // })
-        new_tbody += `<tr>  <td class="namebtn"><a class='link' href='#' data-id="${data[key][0]}"> ${data[key][1]} </a> </td><td>${data[key][2]}</td><td>${data[key][3]} <br> ${data[key][4]} </td><td>${data[key][5]}</td><td><a href="https://${data[key][6]}"> ${data[key][6]}</a></td></tr>`;
+        new_tbody += `<tr>  <td class="namebtn"><a class='link' href='#' data-id="${data[key]['id']}"> ${data[key]['name']} </a> </td><td>${data[key]['orgtype']}</td><td>${data[key]['admarea']} <br> ${data[key]['district']} </td><td>${data[key]['address']}</td><td><a href="https://${data[key]['site']}"> ${data[key]['site']}</a></td></tr>`;
 
       }
     }
