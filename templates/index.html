@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    
+    <table class="display" id="sortable">
+        <thead>
+            <tr>
+                <th>Название учреждения</th>
+                <th>Тип</th>
+                <th>Расположение</th>
+                <th>Юридический адрес</th>
+                <th>Официальный сайт</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for school in schools %}
+        <!-- /school/?school_id={{ school.id }} -->
+            <tr> 
+                <td class="namebtn">
+                    <a class='link' href='#' data-id="{{ school.id }}"> {{ school.name }} </a> 
+                </td>
+                <td>{{ school.orgtype }}</td>
+                <td>{{ school.admarea }} <br> {{school.district}} </td>
+                <td>{{ school.address }}</td>
+                <td><a href="https://{{ school.site }}"> {{ school.site }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    
+        <div class="allinfo" style="display: none;">
+            
+        </div>
+        <script>
+            $(document).ready(function() {
+  $('#sortable').DataTable({
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Все"]],
+    "language": {
+      "search": "Поиск:",
+      "lengthMenu": "Показывать _MENU_ записей на странице",
+      "info": "Показано с _START_ по _END_ из _TOTAL_ записей",
+      "paginate": {
+        "first": "Первая",
+        "last": "Последняя",
+        "next": "Следующая",
+        "previous": "Предыдущая"
+      },
+      "dom": '<"top"i>rt<"bottom"flp><"clear">'
+    }
+  });
+});
+            
+        </script>
+    
+
+{% endblock %}
+
+
