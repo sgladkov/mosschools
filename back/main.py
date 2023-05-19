@@ -80,13 +80,13 @@ def show_amount():
 
 
 @app.get("/list/", response_class=HTMLResponse)
-async def show_list(start:int=1, db: Session = Depends(get_db), end:int=-1):
-    if start <= 0:
-        raise HTTPException(status_code=404, detail="Start must be positive number!")
+async def show_list(start:int=0, db: Session = Depends(get_db), end:int=-1):
+    if start < 0:
+        start = 0
     if end > len(db.query(models.School).all()):
-        raise HTTPException(status_code=404, detail="Out of index!")
+        end = 100
     schools = db.query(models.School).all()
-    schools = schools[start-1:end]
+    schools = schools[start:end]
     data = {}
     for i, school in enumerate(schools):
         data[f's{i}'] = {'id': school.id, 'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site}
