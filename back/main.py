@@ -6,19 +6,16 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from pyproj import Proj, transform
-from typing import List
 from geopy.distance import geodesic
 from fastapi.responses import JSONResponse
 import re
+
+
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="../front/templates")
+app.mount("/static", StaticFiles(directory="../front/static"), name="static")
 
 models.Base.metadata.create_all(bind=engine)
-
-
-
 
 
 def get_db():
@@ -27,6 +24,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 @app.get("/")
 def read_root():
@@ -44,21 +42,23 @@ async def show_areas(area: str, request:Request, db: Session = Depends(get_db)):
     schools = db.query(models.School).filter(models.School.admarea == area).all()
     data = {}
     for i, school in enumerate(schools):
-        data[f's{i}'] = [school.id, school.name, school.orgtype, school.admarea, school.district, school.address, school.site]
+        data[f's{i}'] = {'id': school.id, 'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site}
     return JSONResponse(content=data)
 
 
 @app.get("/school/", response_class=HTMLResponse)
-async def show_school(school_id: int, request:Request, db: Session = Depends(get_db)):
+async def show_school(school_id: int, db: Session = Depends(get_db)):
     school = db.query(models.School).filter(models.School.id == school_id).first()
     if school_id <= 0:
         raise HTTPException(status_code=404, detail="Id must be positive number! ")
     if school is None:
         raise HTTPException(status_code=404, detail="No such id for school")
-    return templates.TemplateResponse("index.html", {"request": request, "schools": [school]})
+    data = {'id': school.id, 'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site}
+    return JSONResponse(content=data)
+
 
 @app.get("/schoolcoords/")
-async def take_coords(school_id: int, request:Request, db: Session = Depends(get_db)):
+async def take_coords(school_id: int, db: Session = Depends(get_db)):
     school = db.query(models.School).filter(models.School.id == school_id).first()
     pattern = r'\d+'
     numbers = re.findall(pattern, school.coords)
@@ -67,39 +67,44 @@ async def take_coords(school_id: int, request:Request, db: Session = Depends(get
         raise HTTPException(status_code=404, detail="Id must be positive number! ")
     if school is None:
         raise HTTPException(status_code=404, detail="No such id for school")
-    return float(lt), float(lg), JSONResponse(content={'name': school.name, 'fullname': school.fullname, 'admarea':school.admarea, 'district': school.district, 'address':school.address, 'site': school.site, 'chiefpos': school.chiefpos, 'chief': school.chief, 'phone': school.phone})
-
-
-@app.get("/list/", response_class=HTMLResponse)
-async def show_list(start: int, end: int, request:Request, db: Session = Depends(get_db)):
-    if start <= 0:
-        raise HTTPException(status_code=404, detail="Start must be positive number!")
-    if end > len(db.query(models.School).all()):
-        raise HTTPException(status_code=404, detail="Out of index!")
-    if start > end:
-        raise HTTPException(status_code=404, detail="Start after end!")
-    schools = db.query(models.School).all()
-    return templates.TemplateResponse("index.html", {"request": request, "schools": schools[start-1:end]})
+    data = {'coords':{'lt':float(lt), 'lg':float(lg)}, 'name': school.name, 'fullname': school.fullname, 'admarea':school.admarea, 'district': school.district, 'address':school.address, 'site': school.site, 'chiefpos': school.chiefpos, 'chief': school.chief, 'phone': school.phone}
+    return JSONResponse(content=data)
 
 
 @app.get("/count/")
 def show_amount():
     db = SessionLocal()
     amount = len(db.query(models.School).all())
-    return amount
+    data = {'amount': amount}
+    return JSONResponse(content=data)
+
+
+@app.get("/list/", response_class=HTMLResponse)
+async def show_list(start:int=0, db: Session = Depends(get_db), end:int=-1):
+    if start < 0:
+        start = 0
+    if end > len(db.query(models.School).all()):
+        end = 100
+    schools = db.query(models.School).all()
+    schools = schools[start:end]
+    data = {}
+    for i, school in enumerate(schools):
+        data[f's{i}'] = {'id': school.id, 'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site}
+    return JSONResponse(content=data)
 
 
 @app.get("/schools-in-radius")
 def get_schools_in_radius(lat: float, lng: float, radius: int, db: Session = Depends(get_db)):
-    schools_in_radius = []
+    data = {}
     pattern = r'\d+'
-    for school in db.query(models.School).all():
+    for i, school in enumerate(db.query(models.School).all()):
         numbers = re.findall(pattern, school.coords)
         lt, lg = f'{numbers[0]}.{numbers[1]}', f'{numbers[2]}.{numbers[3]}'
         distance_to_school = distance(lat, lng, lt, lg)
         if distance_to_school <= radius:
-            schools_in_radius.append(school.id)
-    return schools_in_radius
+            data[f's{i}'] = {'name':school.name,'address':school.address, 'coords':{'lt':float(lt), 'lg':float(lg)}}
+    return JSONResponse(content=data)
+
 
 def distance(lat1, lng1, lat2, lng2):
     
