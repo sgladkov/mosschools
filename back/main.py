@@ -41,8 +41,11 @@ async def show_schools(request:Request,db: Session = Depends(get_db)):
 async def show_areas(area: str, request:Request, db: Session = Depends(get_db)): 
     schools = db.query(models.School).filter(models.School.admarea == area).all()
     data = {}
+    pattern = r'\d+'
     for i, school in enumerate(schools):
-        data[f's{i}'] = {'id': school.id, 'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site}
+        numbers = re.findall(pattern, school.coords)
+        lt, lg = f'{numbers[0]}.{numbers[1]}', f'{numbers[2]}.{numbers[3]}'
+        data[f's{i}'] = {'id': school.id, 'coords':{'lt':lt, 'lg': lg},'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site, 'avgrating':school.avgrating, 'sprrating':school.sprrating}
     return JSONResponse(content=data)
 
 
@@ -53,7 +56,7 @@ async def show_school(school_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Id must be positive number! ")
     if school is None:
         raise HTTPException(status_code=404, detail="No such id for school")
-    data = {'id': school.id, 'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site}
+    data = {'id': school.id, 'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site, 'avgrating':school.avgrating, 'sprrating':school.sprrating}
     return JSONResponse(content=data)
 
 
@@ -67,7 +70,7 @@ async def take_coords(school_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Id must be positive number! ")
     if school is None:
         raise HTTPException(status_code=404, detail="No such id for school")
-    data = {'coords':{'lt':float(lt), 'lg':float(lg)}, 'name': school.name, 'fullname': school.fullname, 'admarea':school.admarea, 'district': school.district, 'address':school.address, 'site': school.site, 'chiefpos': school.chiefpos, 'chief': school.chief, 'phone': school.phone}
+    data = {'coords':{'lt':float(lt), 'lg':float(lg)}, 'name': school.name, 'fullname': school.fullname, 'admarea':school.admarea, 'district': school.district, 'address':school.address, 'site': school.site, 'chiefpos': school.chiefpos, 'chief': school.chief, 'phone': school.phone, 'avgrating':school.avgrating, 'sprrating':school.sprrating}
     return JSONResponse(content=data)
 
 
@@ -80,7 +83,7 @@ def show_amount():
 
 
 @app.get("/list/", response_class=HTMLResponse)
-async def show_list(start:int=0, db: Session = Depends(get_db), end:int=-1):
+async def show_list(start:int=0, db: Session = Depends(get_db), end:int=-1): #начинаем с нуля возвращаем данные
     if start < 0:
         start = 0
     if end > len(db.query(models.School).all()):
@@ -89,7 +92,7 @@ async def show_list(start:int=0, db: Session = Depends(get_db), end:int=-1):
     schools = schools[start:end]
     data = {}
     for i, school in enumerate(schools):
-        data[f's{i}'] = {'id': school.id, 'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site}
+        data[f's{i}'] = {'id': school.id, 'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site, 'avgrating':school.avgrating, 'sprrating':school.sprrating}
     return JSONResponse(content=data)
 
 
@@ -102,7 +105,7 @@ def get_schools_in_radius(lat: float, lng: float, radius: int, db: Session = Dep
         lt, lg = f'{numbers[0]}.{numbers[1]}', f'{numbers[2]}.{numbers[3]}'
         distance_to_school = distance(lat, lng, lt, lg)
         if distance_to_school <= radius:
-            data[f's{i}'] = {'name':school.name,'address':school.address, 'coords':{'lt':float(lt), 'lg':float(lg)}}
+            data[f's{i}'] = {'name':school.name,'address':school.address, 'coords':{'lt':float(lt), 'lg':float(lg)}, 'site':school.site}
     return JSONResponse(content=data)
 
 

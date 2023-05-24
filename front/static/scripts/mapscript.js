@@ -157,16 +157,18 @@ function on_map_click(event, id) {
           for (var key in data) {
             if (data.hasOwnProperty(key)) {
                 
-                all_markers.push(L.marker([data[key]['coords']['lg'],data[key]['coords']['lt']]).bindPopup(`${data[key]['name']}<br>${data[key]['address']}`))
+                all_markers.push(L.marker([data[key]['coords']['lg'],data[key]['coords']['lt']]).bindPopup(`<a href='https://${data[key]['site']}'>${data[key]['name']}</a><br>${data[key]['address']}`))
               }
             } 
             
             window.markers.addLayers(all_markers)
             map.addLayer(window.markers)
+            
         })
         .catch(function (error) {
         console.log(error);
         });
+        
   
 
     }
@@ -198,6 +200,7 @@ function on_map_click(event, id) {
                             <td>${data[key]['orgtype']}</td>
                             <td>${data[key]['admarea']} <br> ${data[key]['district']} </td>
                             <td>${data[key]['address']}</td>
+                            <td>${data[key]['avgrating']}</td>
                             <td><a href="https://${data[key]['site']}"> ${data[key]['site']}</a></td>
                         </tr>`;
         }
@@ -263,6 +266,11 @@ function on_link_click(event) {
               <li> Номер телефона </li>
               <li> +7 ${data['phone']} </li>
           </div>
+          <div class="rating">
+              <li> Рейтинг школы </li>
+              <li> Средний: ${data['avgrating']} </li>
+              <li> Рейтинг по годам: <br> ${data['sprrating']} </li>
+          </div>
       </ul>`
     place.style.display = ''
     table.style.display = 'none'
@@ -283,27 +291,36 @@ function on_adm_click(event) {
   });
   this.firstChild.style.outline = 'solid violet 3px'
   var that_adm = this.dataset.adm
+  if(window.markers !== undefined){
+    map.removeLayer(window.markers) 
+    }
+  window.markers = L.markerClusterGroup({
+    maxClusterRadius: 50, // радиус кластера в пикселях
+    spiderfyOnMaxZoom: true, // разброс маркеров при максимальном увеличении
+    showCoverageOnHover: false, // отображение области покрытия при наведении на кластер
+    disableClusteringAtZoom: 18, // отключение кластеризации при определенном увеличении
+  })
+  var all_markers = []
+  if(marker !== null){
+    map.removeLayer(marker);
+    
+  }
   axios.get('/schools_adm/?area=' + that_adm)
   .then(function (response) {
     var place = document.querySelectorAll('.allinfo')[0]
     var table = document.getElementById('sortable')
     var table_wrapper = document.getElementById('sortable_wrapper')
     var data = response.data;
-    let new_tbody = '<thead><tr><th>Название учреждения</th><th>Тип</th><th>Расположение</th><th>Юридический адрес</th><th>Официальный сайт</th></tr></thead><tbody>'
+    let new_tbody = '<thead><tr><th>Название учреждения</th><th>Тип</th><th>Расположение</th><th>Юридический адрес</th><th>Рейтинг</th><th>Официальный сайт</th></tr></thead><tbody>'
     for (var key in data) {
       if (data.hasOwnProperty(key)) {
-        // Маркеры всех школ региона ставятся при нажатии на регион
-  //       axios.get('/schoolcoords/?school_id=' + data[key][0])
-  // .then(function (response) {
-  //   var lat = response.data[0];
-  //   var lng = response.data[1];
-  //   L.marker([lng, lat]).addTo(map);
-  //   // map.setView([lng, lat], 13);
-  // })
-        new_tbody += `<tr>  <td class="namebtn"><a class='link' href='#' data-id="${data[key]['id']}"> ${data[key]['name']} </a> </td><td>${data[key]['orgtype']}</td><td>${data[key]['admarea']} <br> ${data[key]['district']} </td><td>${data[key]['address']}</td><td><a href="https://${data[key]['site']}"> ${data[key]['site']}</a></td></tr>`;
+        all_markers.push(L.marker([data[key]['coords']['lg'],data[key]['coords']['lt']]).bindPopup(`<a href='https://${data[key]['site']}'>${data[key]['name']}</a><br>${data[key]['address']}`))
+        new_tbody += `<tr>  <td class="namebtn"><a class='link' href='#' data-id="${data[key]['id']}"> ${data[key]['name']} </a> </td><td>${data[key]['orgtype']}</td><td>${data[key]['admarea']} <br> ${data[key]['district']} </td><td>${data[key]['address']}</td><td>${data[key]['avgrating']}</td><td><a href="https://${data[key]['site']}"> ${data[key]['site']}</a></td></tr>`;
 
       }
     }
+    window.markers.addLayers(all_markers)
+    map.addLayer(window.markers)
     table.innerHTML = new_tbody + "</tbody>"
     place.style.display = 'none'
     table.style.display = ''

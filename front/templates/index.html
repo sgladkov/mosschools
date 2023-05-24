@@ -10,6 +10,7 @@
                 <th>Тип</th>
                 <th>Расположение</th>
                 <th>Юридический адрес</th>
+                <th>Рейтинг</th>
                 <th>Официальный сайт</th>
             </tr>
         </thead>
@@ -23,6 +24,7 @@
                 <td>{{ school.orgtype }}</td>
                 <td>{{ school.admarea }} <br> {{school.district}} </td>
                 <td>{{ school.address }}</td>
+                <td>{{ school.avgrating }}</td>
                 <td><a href="https://{{ school.site }}"> {{ school.site }}</a></td>
             </tr>
         {% endfor %}
