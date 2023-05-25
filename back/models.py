@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Float
 from database import Base
 
 class School(Base):
@@ -16,4 +16,6 @@ class School(Base):
     chiefpos = Column(String, index=True)
     chief = Column(String, index=True)
     phone = Column(String, index=True)
+    avgrating = Column(Float, index=True)
+    sprrating = Column(String, index=True)
     description = Column(String, default='', index=True)
