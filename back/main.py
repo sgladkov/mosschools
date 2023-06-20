@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 import models
+import logging
+import logging.handlers
 from database import SessionLocal, engine
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
@@ -12,10 +14,26 @@ import re
 
 
 app = FastAPI()
+
 templates = Jinja2Templates(directory="../front/templates")
 app.mount("/static", StaticFiles(directory="../front/static"), name="static")
 
 models.Base.metadata.create_all(bind=engine)
+
+logger = logging.getLogger('__name__')
+logger.setLevel(logging.INFO)
+console_handler = logging.StreamHandler()
+syslog_handler = logging.handlers.SysLogHandler(address = '/dev/log')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+logger.addHandler(syslog_handler)
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    response = await call_next(request)
+    logger.info(f' Request from {request.client.host}: {request.method} {request.url} returned {response.status_code} {request.headers}')
+    return response
 
 
 def get_db():
@@ -45,7 +63,7 @@ async def show_areas(area: str, request:Request, db: Session = Depends(get_db)):
     for i, school in enumerate(schools):
         numbers = re.findall(pattern, school.coords)
         lt, lg = f'{numbers[0]}.{numbers[1]}', f'{numbers[2]}.{numbers[3]}'
-        data[f's{i}'] = {'id': school.id, 'coords':{'lt':lt, 'lg': lg},'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site, 'avgrating':school.avgrating, 'sprrating':school.sprrating}
+        data[f's{i}'] = {'id': school.id, 'coords':{'lt':lt, 'lg': lg},'name': school.name, 'orgtype': school.orgtype, 'admarea': school.admarea, 'district': school.district, 'address': school.address, 'site': school.site, 'avgrating':school.avgrating, 'sprrating':school.sprrating, 'eduprogs':school.eduprogs}
     return JSONResponse(content=data)
 
 
@@ -70,7 +88,7 @@ async def take_coords(school_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Id must be positive number! ")
     if school is None:
         raise HTTPException(status_code=404, detail="No such id for school")
-    data = {'coords':{'lt':float(lt), 'lg':float(lg)}, 'name': school.name, 'fullname': school.fullname, 'admarea':school.admarea, 'district': school.district, 'address':school.address, 'site': school.site, 'chiefpos': school.chiefpos, 'chief': school.chief, 'phone': school.phone, 'avgrating':school.avgrating, 'sprrating':school.sprrating}
+    data = {'coords':{'lt':float(lt), 'lg':float(lg)}, 'name': school.name, 'fullname': school.fullname, 'orgtype': school.orgtype, 'admarea':school.admarea, 'district': school.district, 'address':school.address, 'site': school.site, 'chiefpos': school.chiefpos, 'chief': school.chief, 'phone': school.phone, 'avgrating':school.avgrating, 'sprrating':school.sprrating, 'eduprogs':school.eduprogs}
     return JSONResponse(content=data)
 
 

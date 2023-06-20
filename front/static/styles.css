@@ -1,110 +1,139 @@
+/* COLORS */
+:root {
+    --Primary: #0e0701;
+    --Primary-Button: #91f8bd;
+    --Secondary-Button: #fce5d4;
+    --Accent: #ee82ee;
+    --Secondary: #fef9f5;
+}
 body {
     font-family: 'Ubuntu', sans-serif;
+    color: var(--Primary);
     list-style-type: none;
+    background: var(--Secondary);
 }
-
-#list_map{
+body ul li {
+    list-style: none;
+    list-style-position: outside;
+    font-size: 20px;
+    line-height: 30px;
+}
+body ul li span {
+    font-weight: bold;
+}
+#table_map {
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap-reverse;
+}
+#table {
+    flex: 2;
+    margin: 40px 0 0 40px
+}
+#list_map{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    row-gap: 18px;
+    margin-top: 40px;
 }
 
-.AdmAreas {
-    flex: 0 0 20%;
-    list-style-type: none;
-}
-.AdmAreas li {
-    text-align: center;
+.AdmAreas  {
+    width: 95%;
+    height: auto;
+    padding: 6px 9px;
+    margin: 0px -9px;
     font-size: 25px;
     font-weight: medium;
-    /* border: solid 2px black; */
-    box-shadow: 3px 3px 11px #808080c9;
-    margin: 12px -5px 12px -5px;
-    padding: 13px 0 13px 0;
-    border-radius: 10px;
+    background: #91f8bd;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    border: 0px;
 }
+
 .admbtn:hover {
-    background-color: rgb(197, 156, 235);
+    background-color: var(--Accent);
 }
 .AdmAreas a {
     outline: none;
     text-decoration: none;
-    color: rgb(99, 99, 99);
+}
+.mapradius {
+    width: calc(95% - 18px);
+    position: relative;
+    padding: 0px 9px;
+    height: auto;
+    font-size: 25px;
+    background: #91f8bd;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+}
+.mapradius p {
+    width: 85%;
+}
+#myInput {
+    width:70px;
+    font-size: 25px;
+    border: none;
+    background: var(--Secondary-Button);
+    border-radius: 5px;
+}
+
+#myCheckbox {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    margin: 0px 0px;
+    right: 9px;
+    top: calc(50% - 25px);
+    background: var(--Secondary);
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
 }
 
 #map {
-    flex: 0 0 40%;
-    width: 500px;
+    width: 95%;
     height: 600px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 15px;
-    box-shadow: 0 0 10px  gray;
-    margin: 90px 0px 50px 50px;
-    
 }
-.allinfo {
-    border: solid 7px violet;
-    border-radius: 15px;
-    color: #505050;
-    background-color: rgba(238, 130, 238, 0.111);
-    margin: 30px 2%;
-}
-.allinfo ul{
-    list-style-type: none;
-    font-size: 23px;
-}
+ 
+ #MainInfo h1 {
+    margin-left: 40px;
+    line-height: 30px;
+    font-size: 24px;
+ }
 
- .allinfo li:nth-child(1) {
-    text-align: center;
-    font-size: 28px;
-    margin-bottom: 20px;
- }
- .allinfo li:first-of-type {
-    font-size: 32px;
-    font-weight: bold;
-    margin: 15px;
-}
- .placing, .offsite, .phone {
-    position: relative;
-    width: 30%;
-    right: 0px;
-    margin: 0 20px 20px 0;
-    padding: 10px;
-    border: solid 4px #505050;
+ #MainInfo {
+    padding: 15px;
+    font-size: 16px;
+    background: var(--Secondary-Button);
+    margin-bottom: 25px;
     border-radius: 10px;
-    box-shadow: 2px 2px 4px #dedede;
+    box-shadow: 0px 2px 3px 1px rgba(0, 0, 0, 0.15);
  }
- .placing, .offsite, .phone li {
-    text-align: end;
- }
- .offsite a{
+ #MainInfo a {
     text-decoration: none;
-    color: #505050;
+    font-size: 20px;
+    background: var(--Primary-Button);
+    color: var(--Primary);
+    border-radius: 5px;
+    padding: 0 5px;
  }
- .offsite:hover a {
-    color: #ffa63e;
+ #MainInfo:hover a{
+    text-decoration: underline;
  }
-
- .mapradius {
-    position: absolute;
-    top: 5px;
-    right: 15%;
-    height: 80px;
-    border: solid 5px #505050;
+ .MoreInfo {
+    background: var(--Secondary-Button);
+    padding: 10px;
     border-radius: 10px;
-    padding: 10px;
-    text-align: center;
-    font-size: 18px;
-    /* margin: 0 15% 30px 0; */
+    box-shadow: 0px 2px 3px 1px rgba(0, 0, 0, 0.15);
  }
- .mapradius p {
-    margin: 5px;
+ .WholeInfo .MoreInfo ul li:first-letter{
+    text-transform: uppercase;
  }
- #myCheckbox {
-    width: 20px;
-    height: 20px;
- }
- #myInput {
-    padding: 10px;
- }
-
-
+.MoreInfo li{
+    padding-bottom: 15px;
+}
