@@ -2,8 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 import models
 import logging
-# from uvicorn import Config, Server
-from logging.handlers import RotatingFileHandler
+import logging.handlers
 from database import SessionLocal, engine
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
@@ -20,17 +19,20 @@ templates = Jinja2Templates(directory="../front/templates")
 app.mount("/static", StaticFiles(directory="../front/static"), name="static")
 
 models.Base.metadata.create_all(bind=engine)
-handler = RotatingFileHandler(filename='app.log', maxBytes=1000000, backupCount=5)
-logger = logging.getLogger(__name__)
-logger.addHandler(handler)
-logging.basicConfig(level=logging.DEBUG, filename="app.log",filemode="a",
-                    format='%(asctime)s %(levelname)s %(message)s')
 
+logger = logging.getLogger('__name__')
+logger.setLevel(logging.INFO)
+console_handler = logging.StreamHandler()
+syslog_handler = logging.handlers.SysLogHandler(address = '/dev/log')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+logger.addHandler(syslog_handler)
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     response = await call_next(request)
-    logger.info(f"Request from {request.client.host}: {request.method} {request.url} returned {response.status_code}")
+    logger.info(f' Request from {request.client.host}: {request.method} {request.url} returned {response.status_code} {request.headers}')
     return response
 
 
