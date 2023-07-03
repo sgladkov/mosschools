@@ -88,7 +88,7 @@ async def take_coords(school_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Id must be positive number! ")
     if school is None:
         raise HTTPException(status_code=404, detail="No such id for school")
-    data = {'coords':{'lt':float(lt), 'lg':float(lg)}, 'name': school.name, 'fullname': school.fullname, 'orgtype': school.orgtype, 'admarea':school.admarea, 'district': school.district, 'address':school.address, 'site': school.site, 'chiefpos': school.chiefpos, 'chief': school.chief, 'phone': school.phone, 'avgrating':school.avgrating, 'sprrating':school.sprrating, 'eduprogs':school.eduprogs}
+    data = {'coords':{'lt':float(lt), 'lg':float(lg)}, 'name': school.name, 'fullname': school.fullname, 'orgtype': school.orgtype, 'admarea':school.admarea, 'district': school.district, 'address':school.address, 'site': school.site, 'chiefpos': school.chiefpos, 'chief': school.chief, 'phone': school.phone, 'avgrating':school.avgrating, 'sprrating':school.sprrating, 'eduprogs':school.eduprogs, 'description':school.description}
     return JSONResponse(content=data)
 
 

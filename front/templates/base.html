@@ -14,51 +14,54 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="module" defer src="../static/scripts/tablesort.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.24/datatables.min.css"/> -->
-    <link rel="stylesheet" type="text/css" href="../static/tablestyle.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.24/datatables.min.js"></script>
+    <link rel="stylesheet" type='text/css' href="//cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/tablestyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/MarkerCluster.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/MarkerCluster.Default.css" />
     
 
 </head>
 <body>
-    <div id="list_map">
-        <ul class="AdmAreas">
-            <a href="#" data-adm="Центральный%20административный%20округ"><li class='admbtn' id="2162196">Центральный</li></a>
-            <a href="#" data-adm="Северный%20административный%20округ"><li class='admbtn' id="162903">Северный</li></a>
-            <a href="#" data-adm="Северо-Восточный%20административный%20округ"><li class='admbtn' id="1252558">Северо-Восточный</li></a>
-            <a href="#" data-adm="Восточный%20административный%20округ"><li class='admbtn' id="1320234">Восточный</li></a>
-            <a href="#" data-adm="Юго-Восточный%20административный%20округ"><li class='admbtn' id="1278703">Юго-Восточный</li></a>
-            <a href="#" data-adm="Южный%20административный%20округ"><li class='admbtn' id="1282181">Южный</li></a>
-        </ul>
-        <ul class="AdmAreas">
-            <a href="#" data-adm="Юго-Западный%20административный%20округ"><li class='admbtn' id="1304596">Юго-Западный</li></a>
-            <a href="#" data-adm="Западный%20административный%20округ"><li class='admbtn' id="226149">Западный</li></a>
-            <a href="#" data-adm="Северо-Западный%20административный%20округ"><li class='admbtn' id="446092">Северо-Западный</li></a>
-            <a href="#" data-adm="Зеленоградский%20административный%20округ"><li class='admbtn' id="1320358">Зеленоградский</li></a>
-            <a href="#" data-adm="Троицкий%20административный%20округ"><li class='admbtn' id="2263059">Троицкий</li></a>
-            <a href="#" data-adm="Новомосковский%20административный%20округ"><li class='admbtn' id="2263058">Новомосковский</li></a>
-        </ul>
-    
-        <label class="mapradius">
-            <p>Поиск по радиусу при клике на карту</p>
-            <input type="checkbox" id="myCheckbox" name="myCheckbox" value="1">
-            <input step="500" min="0" type="number" id="myInput" name="myInput" placeholder="Введите радиус в метрах">
-        </label>
-
-        <div id="map"></div>
+    <form action="/schools" class="home_btn">
+        <button type="submit" value="" class="home"><div ><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 30 30" width="30px" height="30px"><circle cx="26" cy="12" r="1"/><circle cx="15" cy="3" r="1"/><circle cx="4" cy="12" r="1"/><path d="M25,11h-3V6c0-0.552,0.448-1,1-1h1c0.552,0,1,0.448,1,1V11z"/><path d="M15,3v10h11l0.681-1.732L15.678,2.267L15,3z"/><path d="M14.322,2.267L3.319,11.268L4,13h11V3L14.322,2.267z"/><path d="M5,12v12c0,1.105,0.895,2,2,2h16c1.105,0,2-0.895,2-2V12H5z M22,23h-4v-8h4V23z"/></svg></div></button>
         
-        <script defer type='module' src="../static/scripts/admlvl5.js"></script>
-        <script defer src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-        <script defer src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-        <script defer type='module' src="../static/scripts/mapscript.js"></script>
-        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/leaflet.markercluster.js"></script>
-        <!-- <script defer src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/"></script> -->
-    </div> 
+    </form>
+    <div id="table_map">
+        <div id="table">
+            {% block content %}{% endblock %}
+        </div>
+        <div id="list_map">
+            <select class="AdmAreas">
+                <a href="#" data-adm="None"><option disabled value="None" class='admbtn' id="0" selected="selected">Выберите округ</option></a>
+                <a href="#" data-adm="Центральный%20административный%20округ"><option value="Центральный%20административный%20округ" class='admbtn' id="2162196">Центральный</option></a>
+                <a href="#" data-adm="Северный%20административный%20округ"><option value="Северный%20административный%20округ" class='admbtn' id="162903">Северный</option></a>
+                <a href="#" data-adm="Северо-Восточный%20административный%20округ"><option value="Северо-Восточный%20административный%20округ" class='admbtn' id="1252558">Северо-Восточный</option></a>
+                <a href="#" data-adm="Восточный%20административный%20округ"><option value="Восточный%20административный%20округ" class='admbtn' id="1320234">Восточный</li></a>
+                <a href="#" data-adm="Юго-Восточный%20административный%20округ"><option value="Юго-Восточный%20административный%20округ" class='admbtn' id="1278703">Юго-Восточный</option></a>
+                <a href="#" data-adm="Южный%20административный%20округ"><option value="Южный%20административный%20округ" class='admbtn' id="1282181">Южный</li></a>
+                <a href="#" data-adm="Юго-Западный%20административный%20округ"><option value="Юго-Западный%20административный%20округ" class='admbtn' id="1304596">Юго-Западный</option></a>
+                <a href="#" data-adm="Западный%20административный%20округ"><option value="Западный%20административный%20округ" class='admbtn' id="226149">Западный</li></a>
+                <a href="#" data-adm="Северо-Западный%20административный%20округ"><option value="Северо-Западный%20административный%20округ" class='admbtn' id="446092">Северо-Западный</option></a>
+                <a href="#" data-adm="Зеленоградский%20административный%20округ"><option value="Зеленоградский%20административный%20округ" class='admbtn' id="1320358">Зеленоградский</option></a>
+                <a href="#" data-adm="Троицкий%20административный%20округ"><option value="Троицкий%20административный%20округ" class='admbtn' id="2263059">Троицкий</li></a>
+                <a href="#" data-adm="Новомосковский%20административный%20округ"><option value="Новомосковский%20административный%20округ" class='admbtn' id="2263058">Новомосковский</option></a>
+            </select>
+        
+            <label class="mapradius">
+                <p>Поиск в радиусе <input step="500" min="0" type="number" id="myInput" name="myInput" placeholder="ꟷꟷꟷꟷ"> метров при нажатии на карту <input type="checkbox" id="myCheckbox" name="myCheckbox" value="1"></p>
+            </label>
 
-    {% block content %}{% endblock %}
+            <div id="map"></div>
+
+            <script defer type='module' src="../static/scripts/admlvl5.js"></script>
+            <script defer src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+            <script defer src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+            <script defer type='module' src="../static/scripts/mapscript.js"></script>
+            <script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/leaflet.markercluster.js"></script>
+        </div> 
+    </div>
     <p style="font-size: 150%;">Рейтинг определяется соотношением между учениками набравших более 220 баллов и набравших менее 160 баллов. Максимальное значение получили школы где не было учеников набравших менее 160 баллов.</p>
 </body>
 </html>

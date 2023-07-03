@@ -16,7 +16,6 @@
         </thead>
         <tbody>
         {% for school in schools %}
-        <!-- /school/?school_id={{ school.id }} -->
             <tr> 
                 <td class="namebtn">
                     <a class='link' href='#' data-id="{{ school.id }}"> {{ school.name }} </a> 
@@ -31,7 +30,6 @@
         </tbody>
     </table>
 
-    
         <div class="allinfo" style="display: none;">
             
         </div>
@@ -53,10 +51,8 @@
     }
   });
 });
-            
+       
         </script>
-    
-
 {% endblock %}
 
 

@@ -2,6 +2,8 @@ function table_sort() {
     $(document).ready(function() {
     $('#sortable').DataTable({
         destroy: true,
+        "scrollY":        "75vh",
+        "scrollCollapse": true,
       "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Все"]],
       "language": {
         "search": "Поиск:",
@@ -13,7 +15,7 @@ function table_sort() {
           "next": "Следующая",
           "previous": "Предыдущая"
         },
-        "dom": '<"top"i>rt<"bottom"flp><"clear">'
+        "dom": '<"top"i>rt<"clear">'
       }
     });
   });}

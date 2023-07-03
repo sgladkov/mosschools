@@ -18,4 +18,5 @@ class School(Base):
     phone = Column(String, index=True)
     avgrating = Column(Float, index=True)
     sprrating = Column(String, index=True)
+    eduprogs = Column(String, index=True)
     description = Column(String, default='', index=True)
