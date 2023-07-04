@@ -31,7 +31,7 @@ var admlvl5 = {
 };
 var mapStyle = {
     "color": "#505050", 
-    "weight":2,
+    "weight":0.5,
     "fill": "#505050", 
     "fillOpacity": 0.2
 };
